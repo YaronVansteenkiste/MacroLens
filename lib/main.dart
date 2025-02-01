@@ -11,7 +11,7 @@ void main() {
         ),
         body: Center(
           child: Text(
-            'Coming Soon...',
+            'Testing Auto Deployment',
             style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
