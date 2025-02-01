@@ -15,11 +15,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My App',
+      title: 'MacroLens',
       theme: ThemeData(
         primaryColor: const Color(0xFF4A90E2), 
         hintColor: const Color(0xFF00BCD4), 
-        scaffoldBackgroundColor: const Color(0xFF121212),  
+        scaffoldBackgroundColor: const Color.fromARGB(255, 21, 27, 35),  
         appBarTheme: const AppBarTheme(
           color: Color(0xFF1E1E1E),  
           iconTheme: IconThemeData(color: Colors.white),
@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Icon(Icons.home, color: Colors.white),
               Text('Home', style: TextStyle(color: Colors.white)),
             ],
-          ),
+          ), 
           Column(
             children: [
               Icon(Icons.person, color: Colors.white),
@@ -89,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ],
-        color: const Color(0xFF1E1E1E), 
+        color: const Color.fromARGB(255, 23, 35, 49), 
         height: 60,
         circleWidth: 60,
         activeIndex: tabIndex,
@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
           bottomRight: Radius.circular(24),
           bottomLeft: Radius.circular(24),
         ),
-        shadowColor: const Color.fromARGB(255, 114, 114, 114), 
+        shadowColor: const Color.fromARGB(0, 243, 243, 243), 
         elevation: 10,
       ),
       body: PageView(
