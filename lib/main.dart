@@ -11,7 +11,7 @@ void main() {
         ),
         body: Center(
           child: Text(
-            'Testing Auto Deployment',
+            'Testing Auto Deployment to MacOS',
             style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
