@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:macro_lens/meal_info.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class BarcodeScanner extends StatefulWidget {
@@ -20,7 +21,9 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
           children: [
             ElevatedButton(
               onPressed: () async {
-                String? res = await SimpleBarcodeScanner.scanBarcode(
+                if (!mounted) return;
+
+                String? barcode = await SimpleBarcodeScanner.scanBarcode(
                   context,
                   barcodeAppBar: const BarcodeAppBar(
                     appBarTitle: 'Test',
@@ -33,9 +36,24 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                   cameraFace: CameraFace.back,
                   scanFormat: ScanFormat.ONLY_BARCODE,
                 );
-                setState(() {
-                  result = res ?? "No result";
-                });
+
+                if (barcode != null && barcode.isNotEmpty) {
+                  try {
+                    Map<String, dynamic> productInfo =
+                        await getMealInfoFromBarcode(barcode);
+                    if (mounted) {
+                      setState(() {
+                        result = productInfo['product_name'] ?? "No product name";
+                      });
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      setState(() {
+                        result = "Error: $e";
+                      });
+                    }
+                  }
+                }
               },
               child: const Text('Scan Barcode'),
             ),
