@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:macro_lens/bottom_nav_bar.dart'; 
-
-import 'dashboard_page.dart';
-import 'home_content.dart';
-import 'profile_page.dart';
+import 'package:macro_lens/add_meal_page.dart';
+import 'package:macro_lens/home_content.dart';
+import 'package:macro_lens/profile_page.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -44,42 +44,56 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+
 class _MyHomePageState extends State<MyHomePage> {
-  int _tabIndex = 1;
-  late PageController pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    pageController = PageController(initialPage: _tabIndex);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        controller: pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _tabIndex = index;
-          });
-        },
-        children: [
-          DashboardPage(),
-          HomeContent(),
-          ProfilePage(),
+      body: PersistentTabView(
+        tabs: [
+          PersistentTabConfig(
+            screen: yourFirstScreen(),
+            item: ItemConfig(
+              icon: Icon(Icons.home),
+              title: "Home",
+            ),
+          ),
+          PersistentTabConfig(
+            screen: yourSecondScreen(),
+            item: ItemConfig(
+                icon: Icon(Icons.add),
+                inactiveForegroundColor: Colors.white,
+                activeColorSecondary: Colors.white,
+            ),
+          ),
+          PersistentTabConfig(
+            screen: yourThirdScreen(),
+            item: ItemConfig(
+                icon: Icon(Icons.person),
+                title: "Profile",
+            ),
+          ),
         ],
-      ),
-      bottomNavigationBar: buildBottomNavBar(
-        _tabIndex, 
-        pageController, 
-        onTabChanged: (index) {
-          setState(() {
-            _tabIndex = index;
-          });
-          pageController.jumpToPage(_tabIndex);
-        },
+        navBarBuilder: (navBarConfig) => Style13BottomNavBar(
+          navBarConfig: navBarConfig,
+          navBarDecoration: NavBarDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            color: const Color.fromARGB(255, 23, 35, 49),
+          ),
+        ),
       ),
     );
   }
+}
+
+Widget yourFirstScreen() {
+  return HomeContent();
+}
+
+Widget yourSecondScreen() {
+  return AddMealPage();
+}
+
+Widget yourThirdScreen() {
+  return ProfilePage();
 }
