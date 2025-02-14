@@ -10,7 +10,12 @@ class BarcodeScanner extends StatefulWidget {
 }
 
 class _BarcodeScannerState extends State<BarcodeScanner> {
-  String result = "No result";
+  String product = "No result";
+  String calories = "No result";
+  String protein = "No result";
+  String carbs = "No result";
+  String sugar = "No result";
+  String fat = "No result";
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +48,18 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                         await getMealInfoFromBarcode(barcode);
                     if (mounted) {
                       setState(() {
-                        result = productInfo['product_name'] ?? "No product name";
+                        product = productInfo['product_name'] ?? "No product name";
+                        calories = productInfo['energy-kcal_100g'] ?? "No calories found per 100g";
+                        protein = productInfo['proteins_100g'] ?? "No protein found per 100g";
+                        carbs = productInfo['carbohydrates_100g'] ?? "No carbs found per 100g";
+                        sugar = productInfo['sugars_100g'] ?? "No sugar found per 100g";
+                        fat = productInfo['fat_100g'] ?? "No fat found per 100g";
                       });
                     }
                   } catch (e) {
                     if (mounted) {
                       setState(() {
-                        result = "Error: $e";
+                        product = "Error: $e";
                       });
                     }
                   }
@@ -60,10 +70,32 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
             const SizedBox(
               height: 10,
             ),
-            Text('Scan Barcode Result: $result'),
+            Text('Product: $product'),
             const SizedBox(
               height: 10,
             ),
+            Text('Calories: $calories'),
+            const SizedBox(
+              height: 10,
+            ),
+            Text('Protein: $protein'),
+            const SizedBox(
+              height: 10,
+            ),
+            Text('Carbs: $carbs'),
+            const SizedBox(
+              height: 10,
+            ),
+            Text('Sugar: $sugar'),
+            const SizedBox(
+              height: 10,
+            ),
+            Text('Fat: $fat'),
+            const SizedBox(
+              height: 10,
+            ),
+
+
           ],
         ),
       ),
