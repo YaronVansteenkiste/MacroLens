@@ -19,7 +19,6 @@ class AddMealPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            // List of recently added meals
             SizedBox(
               height: 400,
               child: ListView.builder(
@@ -40,7 +39,6 @@ class AddMealPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            // Scan barcode button
             Center(
               child: ElevatedButton.icon(
                 onPressed: () {
