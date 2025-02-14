@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:macro_lens/barcode_scanner.dart';
 
 class AddMealPage extends StatelessWidget {
   const AddMealPage({super.key});
@@ -42,7 +43,10 @@ class AddMealPage extends StatelessWidget {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  print("TODO: Scanner function");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const BarcodeScanner()),
+                  );
                 },
                 icon: const Icon(Icons.camera_alt),
                 label: const Text("Scan Meal Barcode"),
