@@ -1,7 +1,7 @@
 name: macro_lens
 description: MacroLens helps you effortlessly track your daily macronutrient intake by scanning and recording everything you've eaten. Stay on top of your nutrition goals with real-time insights into your protein, carbohydrate, and fat consumption.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
@@ -14,8 +14,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   fl_chart: ^0.70.2
   persistent_bottom_nav_bar_v2: ^5.3.1
-  image_picker: ^1.1.2
-
+  simple_barcode_scanner: ^0.3.0
+  http: ^1.3.0
 
 dev_dependencies:
   flutter_test:
