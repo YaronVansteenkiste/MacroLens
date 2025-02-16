@@ -54,8 +54,6 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                         final nutriments = productInfo['nutriments'] ??
                             {}; 
                           
-                        print(nutriments);
-
                         calories = nutriments['energy-kcal_100g']?.toString() ??
                             "No calories found per 100g";
                         protein = nutriments['proteins_100g']?.toString() ??
