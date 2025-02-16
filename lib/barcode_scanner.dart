@@ -49,11 +49,12 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                     if (mounted) {
                       setState(() {
                         product = productInfo['product_name'] ?? "No product name";
-                        calories = productInfo['energy-kcal_100g'] ?? "No calories found per 100g";
-                        protein = productInfo['proteins_100g'] ?? "No protein found per 100g";
-                        carbs = productInfo['carbohydrates_100g'] ?? "No carbs found per 100g";
-                        sugar = productInfo['sugars_100g'] ?? "No sugar found per 100g";
-                        fat = productInfo['fat_100g'] ?? "No fat found per 100g";
+                        final nutriments = productInfo['nutriments'] ?? {};
+                        calories = nutriments['energy-kcal_100g'] ?? "No calories found per 100g";
+                        protein = nutriments['proteins_100g'] ?? "No protein found per 100g";
+                        carbs = nutriments['carbohydrates_100g'] ?? "No carbs found per 100g";
+                        sugar = nutriments['sugars_100g'] ?? "No sugar found per 100g";
+                        fat = nutriments['fat_100g'] ?? "No fat found per 100g";
                       });
                     }
                   } catch (e) {
