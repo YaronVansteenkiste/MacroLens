@@ -48,13 +48,24 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                         await getMealInfoFromBarcode(barcode);
                     if (mounted) {
                       setState(() {
-                        product = productInfo['product_name'] ?? "No product name";
-                        final nutriments = productInfo['nutriments'] ?? {};
-                        calories = nutriments['energy-kcal_100g'] ?? "No calories found per 100g";
-                        protein = nutriments['proteins_100g'] ?? "No protein found per 100g";
-                        carbs = nutriments['carbohydrates_100g'] ?? "No carbs found per 100g";
-                        sugar = nutriments['sugars_100g'] ?? "No sugar found per 100g";
-                        fat = nutriments['fat_100g'] ?? "No fat found per 100g";
+                        product =
+                            productInfo['product_name'] ?? "No product name";
+
+                        final nutriments = productInfo['nutriments'] ??
+                            {}; 
+                          
+                        print(nutriments);
+
+                        calories = nutriments['energy-kcal_100g']?.toString() ??
+                            "No calories found per 100g";
+                        protein = nutriments['proteins_100g']?.toString() ??
+                            "No protein found per 100g";
+                        carbs = nutriments['carbohydrates_100g']?.toString() ??
+                            "No carbs found per 100g";
+                        sugar = nutriments['sugars_100g']?.toString() ??
+                            "No sugar found per 100g";
+                        fat = nutriments['fat_100g']?.toString() ??
+                            "No fat found per 100g";
                       });
                     }
                   } catch (e) {
@@ -95,8 +106,6 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
             const SizedBox(
               height: 10,
             ),
-
-
           ],
         ),
       ),
