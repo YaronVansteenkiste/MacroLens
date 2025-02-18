@@ -30,38 +30,40 @@ class _HomeContentState extends State<HomeContent> {
             _buildMealSection('Lunch', lunchMeals, Icons.lunch_dining),
             _buildMealSection('Dinner', dinnerMeals, Icons.dinner_dining),
             _buildMealSection('Snacks', snackMeals, Icons.fastfood),
-            ElevatedButton(
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const BarcodeScanner(),
-                  ),
-                );
-                if (result != null && result is Map<String, dynamic>) {
-                  setState(() {
-                    switch (result['mealType']) {
-                      case 'Breakfast':
-                        breakfastMeals.add(result);
-                        break;
-                      case 'Lunch':
-                        lunchMeals.add(result);
-                        break;
-                      case 'Dinner':
-                        dinnerMeals.add(result);
-                        break;
-                      case 'Snacks':
-                        snackMeals.add(result);
-                        break;
-                    }
-                  });
-                }
-              },
-              child: const Text('Scan Barcode'),
-            ),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const BarcodeScanner(),
+            ),
+          );
+          if (result != null && result is Map<String, dynamic>) {
+            setState(() {
+              switch (result['mealType']) {
+                case 'Breakfast':
+                  breakfastMeals.add(result);
+                  break;
+                case 'Lunch':
+                  lunchMeals.add(result);
+                  break;
+                case 'Dinner':
+                  dinnerMeals.add(result);
+                  break;
+                case 'Snacks':
+                  snackMeals.add(result);
+                  break;
+              }
+            });
+          }
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.blueAccent,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 

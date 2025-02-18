@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:macro_lens/barcode_scanner.dart';
+import 'package:macro_lens/dashboard_page.dart';
 import 'package:macro_lens/home_content.dart';
 import 'package:macro_lens/profile_page.dart';
-import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
+import 'bottom_nav_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -46,45 +47,36 @@ class MyHomePage extends StatefulWidget {
 
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _tabIndex = 1;
+  final PageController _pageController = PageController(initialPage: 1);
+
+  void _onTabChanged(int index) {
+    setState(() {
+      _tabIndex = index;
+      _pageController.jumpToPage(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 21, 27, 35),
       ),
-      body: PersistentTabView(
-        tabs: [
-          PersistentTabConfig(
-            screen: yourFirstScreen(),
-            item: ItemConfig(
-              icon: Icon(Icons.home),
-              title: "Home",
-            ),
-          ),
-          PersistentTabConfig(
-            screen: yourSecondScreen(),
-            item: ItemConfig(
-                icon: Icon(Icons.add),
-                inactiveForegroundColor: Colors.white,
-                activeColorSecondary: Colors.white,
-            ),
-          ),
-          PersistentTabConfig(
-            screen: yourThirdScreen(),
-            item: ItemConfig(
-                icon: Icon(Icons.person),
-                title: "Profile",
-            ),
-          ),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _tabIndex = index;
+          });
+        },
+        children: [
+          DashboardPage(),
+          HomeContent(),
+          ProfilePage(),
         ],
-        navBarBuilder: (navBarConfig) => Style13BottomNavBar(
-          navBarConfig: navBarConfig,
-          navBarDecoration: NavBarDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            color: const Color.fromARGB(255, 23, 35, 49),
-          ),
-        ),
       ),
+      bottomNavigationBar: buildBottomNavBar(_tabIndex, _pageController, onTabChanged: _onTabChanged),
     );
   }
 }
