@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:macro_lens/meal_info.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
+import 'package:macro_lens/food_detail_page.dart';
 
 class BarcodeScanner extends StatefulWidget {
   const BarcodeScanner({super.key});
@@ -16,6 +17,7 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
   String carbs = "No result";
   String sugar = "No result";
   String fat = "No result";
+  String selectedMealType = "Breakfast"; // Default meal type
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,21 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            DropdownButton<String>(
+              value: selectedMealType,
+              items: <String>['Breakfast', 'Lunch', 'Dinner', 'Snacks']
+                  .map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedMealType = newValue!;
+                });
+              },
+            ),
             ElevatedButton(
               onPressed: () async {
                 if (!mounted) return;
@@ -46,26 +63,46 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                   try {
                     Map<String, dynamic> productInfo =
                         await getMealInfoFromBarcode(barcode);
-                    if (mounted) {
-                      setState(() {
-                        product =
-                            productInfo['product_name'] ?? "No product name";
 
-                        final nutriments = productInfo['nutriments'] ??
-                            {}; 
-                          
-                        calories = nutriments['energy-kcal_100g']?.toString() ??
-                            "No calories found per 100g";
-                        protein = nutriments['proteins_100g']?.toString() ??
-                            "No protein found per 100g";
-                        carbs = nutriments['carbohydrates_100g']?.toString() ??
-                            "No carbs found per 100g";
-                        sugar = nutriments['sugars_100g']?.toString() ??
-                            "No sugar found per 100g";
-                        fat = nutriments['fat_100g']?.toString() ??
-                            "No fat found per 100g";
-                      });
-                    }
+                    WidgetsBinding.instance.addPostFrameCallback((_) async {
+                      if (mounted) {
+                        setState(() {
+                          product =
+                              productInfo['product_name'] ?? "No product name";
+
+                          final nutriments = productInfo['nutriments'] ?? {};
+                          calories = nutriments['energy-kcal_100g']?.toString() ??
+                              "No calories found per 100g";
+                          protein = nutriments['proteins_100g']?.toString() ??
+                              "No protein found per 100g";
+                          carbs = nutriments['carbohydrates_100g']?.toString() ??
+                              "No carbs found per 100g";
+                          sugar = nutriments['sugars_100g']?.toString() ??
+                              "No sugar found per 100g";
+                          fat = nutriments['fat_100g']?.toString() ??
+                              "No fat found per 100g";
+                        });
+
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FoodDetailPage(
+                              product: product,
+                              calories: double.tryParse(calories) ?? 0.0,
+                              protein: double.tryParse(protein) ?? 0.0,
+                              carbs: double.tryParse(carbs) ?? 0.0,
+                              sugar: double.tryParse(sugar) ?? 0.0,
+                              fat: double.tryParse(fat) ?? 0.0,
+                              mealType: selectedMealType,
+                            ),
+                          ),
+                        );
+
+                        if (result != null && mounted) {
+                          Navigator.pop(context, result);
+                        }
+                      }
+                    });
                   } catch (e) {
                     if (mounted) {
                       setState(() {
@@ -77,30 +114,6 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
               },
               child: const Text('Scan Barcode'),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text('Product: $product'),
-            const SizedBox(
-              height: 10,
-            ),
-            Text('Calories: $calories'),
-            const SizedBox(
-              height: 10,
-            ),
-            Text('Protein: $protein'),
-            const SizedBox(
-              height: 10,
-            ),
-            Text('Carbs: $carbs'),
-            const SizedBox(
-              height: 10,
-            ),
-            Text('Sugar: $sugar'),
-            const SizedBox(
-              height: 10,
-            ),
-            Text('Fat: $fat'),
             const SizedBox(
               height: 10,
             ),

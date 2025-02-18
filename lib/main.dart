@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:macro_lens/add_meal_page.dart';
+import 'package:macro_lens/barcode_scanner.dart';
 import 'package:macro_lens/home_content.dart';
 import 'package:macro_lens/profile_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
@@ -94,7 +94,7 @@ Widget yourFirstScreen() {
 }
 
 Widget yourSecondScreen() {
-  return AddMealPage();
+  return BarcodeScanner();
 }
 
 Widget yourThirdScreen() {
