@@ -29,7 +29,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
 
   void _addFoodToHomePage() {
     Navigator.pop(context, {
-      'name': widget.product, // Ensure the product name is included
+      'name': widget.product,
       'calories': double.parse((widget.calories * amount / 100).toStringAsFixed(1)),
       'protein': double.parse((widget.protein * amount / 100).toStringAsFixed(1)),
       'carbs': double.parse((widget.carbs * amount / 100).toStringAsFixed(1)),

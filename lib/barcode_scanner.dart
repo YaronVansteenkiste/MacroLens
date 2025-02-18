@@ -17,6 +17,8 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
   String carbs = "No result";
   String sugar = "No result";
   String fat = "No result";
+
+  final List<String> mealTypes = ["Breakfast", "Lunch", "Dinner", "Snacks"];
   String selectedMealType = "Breakfast"; // Default meal type
 
   @override
@@ -26,21 +28,26 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            DropdownButton<String>(
-              value: selectedMealType,
-              items: <String>['Breakfast', 'Lunch', 'Dinner', 'Snacks']
-                  .map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
+            Wrap(
+              spacing: 10,
+              children: mealTypes.map((meal) {
+                return ChoiceChip(
+                  label: Text(meal),
+                  selected: selectedMealType == meal,
+                  selectedColor: Colors.blueAccent,
+                  backgroundColor: Colors.grey[200],
+                  labelStyle: TextStyle(
+                    color: selectedMealType == meal ? Colors.white : Colors.black,
+                  ),
+                  onSelected: (bool selected) {
+                    setState(() {
+                      selectedMealType = meal;
+                    });
+                  },
                 );
               }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedMealType = newValue!;
-                });
-              },
             ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 if (!mounted) return;
@@ -67,20 +74,13 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                     WidgetsBinding.instance.addPostFrameCallback((_) async {
                       if (mounted) {
                         setState(() {
-                          product =
-                              productInfo['product_name'] ?? "No product name";
-
+                          product = productInfo['product_name'] ?? "No product name";
                           final nutriments = productInfo['nutriments'] ?? {};
-                          calories = nutriments['energy-kcal_100g']?.toString() ??
-                              "No calories found per 100g";
-                          protein = nutriments['proteins_100g']?.toString() ??
-                              "No protein found per 100g";
-                          carbs = nutriments['carbohydrates_100g']?.toString() ??
-                              "No carbs found per 100g";
-                          sugar = nutriments['sugars_100g']?.toString() ??
-                              "No sugar found per 100g";
-                          fat = nutriments['fat_100g']?.toString() ??
-                              "No fat found per 100g";
+                          calories = nutriments['energy-kcal_100g']?.toString() ?? "No calories found per 100g";
+                          protein = nutriments['proteins_100g']?.toString() ?? "No protein found per 100g";
+                          carbs = nutriments['carbohydrates_100g']?.toString() ?? "No carbs found per 100g";
+                          sugar = nutriments['sugars_100g']?.toString() ?? "No sugar found per 100g";
+                          fat = nutriments['fat_100g']?.toString() ?? "No fat found per 100g";
                         });
 
                         final result = await Navigator.push(
@@ -114,9 +114,7 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
               },
               child: const Text('Scan Barcode'),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
           ],
         ),
       ),
