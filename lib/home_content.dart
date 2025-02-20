@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:macro_lens/barcode_scanner.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Add this import
+import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
+import 'dart:convert';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
@@ -14,6 +18,57 @@ class _HomeContentState extends State<HomeContent> {
   List<Map<String, dynamic>> lunchMeals = [];
   List<Map<String, dynamic>> dinnerMeals = [];
   List<Map<String, dynamic>> snackMeals = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMeals();
+  }
+
+  Future<void> _loadMeals() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      setState(() {
+        breakfastMeals = List<Map<String, dynamic>>.from(userDoc['breakfastMeals'] ?? []);
+        lunchMeals = List<Map<String, dynamic>>.from(userDoc['lunchMeals'] ?? []);
+        dinnerMeals = List<Map<String, dynamic>>.from(userDoc['dinnerMeals'] ?? []);
+        snackMeals = List<Map<String, dynamic>>.from(userDoc['snackMeals'] ?? []);
+      });
+    }
+  }
+
+  Future<void> _saveMeals() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+        'breakfastMeals': breakfastMeals,
+        'lunchMeals': lunchMeals,
+        'dinnerMeals': dinnerMeals,
+        'snackMeals': snackMeals,
+      });
+    }
+  }
+
+  void _removeMeal(String mealType, int index) {
+    setState(() {
+      switch (mealType) {
+        case 'Breakfast':
+          breakfastMeals.removeAt(index);
+          break;
+        case 'Lunch':
+          lunchMeals.removeAt(index);
+          break;
+        case 'Dinner':
+          dinnerMeals.removeAt(index);
+          break;
+        case 'Snacks':
+          snackMeals.removeAt(index);
+          break;
+      }
+      _saveMeals();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +112,7 @@ class _HomeContentState extends State<HomeContent> {
                   snackMeals.add(result);
                   break;
               }
+              _saveMeals();
             });
           }
         },
@@ -163,49 +219,56 @@ class _HomeContentState extends State<HomeContent> {
                     style: const TextStyle(color: Colors.white70)),
               ],
             ),
-            for (var meal in meals)
+            for (var i = 0; i < meals.length; i++)
               Padding(
                 padding: const EdgeInsets.only(left: 24, top: 4),
-                child: Text('${meal['name']}: ${meal['calories']} calories',
-                    style:
-                        const TextStyle(color: Colors.white60, fontSize: 14)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('${meals[i]['name']}: ${meals[i]['calories']} calories',
+                        style: const TextStyle(color: Colors.white60, fontSize: 14)),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.redAccent),
+                      onPressed: () => _removeMeal(title, i),
+                    ),
+                  ],
+                ),
               ),
             Padding(
               padding: const EdgeInsets.only(left: 24, top: 4),
               child: GestureDetector(
-                child: GestureDetector(
-                  onTap: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const BarcodeScanner(),
-                      ),
-                    );
-                    if (result != null && result is Map<String, dynamic>) {
-                      setState(() {
-                        switch (title) {
-                          case 'Breakfast':
-                            breakfastMeals.add(result);
-                            break;
-                          case 'Lunch':
-                            lunchMeals.add(result);
-                            break;
-                          case 'Dinner':
-                            dinnerMeals.add(result);
-                            break;
-                          case 'Snacks':
-                            snackMeals.add(result);
-                            break;
-                        }
-                      });
-                    }
-                  },
-                  child: const Text('ADD FOOD',
-                      style: TextStyle(
-                          color: Colors.blueAccent,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold)),
-                ),
+                onTap: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BarcodeScanner(),
+                    ),
+                  );
+                  if (result != null && result is Map<String, dynamic>) {
+                    setState(() {
+                      switch (title) {
+                        case 'Breakfast':
+                          breakfastMeals.add(result);
+                          break;
+                        case 'Lunch':
+                          lunchMeals.add(result);
+                          break;
+                        case 'Dinner':
+                          dinnerMeals.add(result);
+                          break;
+                        case 'Snacks':
+                          snackMeals.add(result);
+                          break;
+                      }
+                      _saveMeals();
+                    });
+                  }
+                },
+                child: const Text('ADD FOOD',
+                    style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -213,8 +276,8 @@ class _HomeContentState extends State<HomeContent> {
       ),
     );
   }
-}
 
-int _calculateTotalCalories(List<Map<String, dynamic>> meals) {
-  return meals.fold(0, (sum, meal) => sum + (meal['calories'] as num).toInt());
+  int _calculateTotalCalories(List<Map<String, dynamic>> meals) {
+    return meals.fold(0, (sum, meal) => sum + (meal['calories'] as num).toInt());
+  }
 }

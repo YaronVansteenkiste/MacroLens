@@ -4,11 +4,18 @@ import 'package:macro_lens/dashboard_page.dart';
 import 'package:macro_lens/home_content.dart';
 import 'package:macro_lens/profile_page.dart';
 import 'bottom_nav_bar.dart';
+import 'login_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(options: firebaseOptions);
+  }
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -31,7 +38,29 @@ class MyApp extends StatelessWidget {
           titleLarge: TextStyle(color: Colors.white),
         ),
       ),
-      home: const MyHomePage(title: 'Home Page'),
+      home: const AuthWrapper(),
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Something went wrong'));
+        } else if (snapshot.hasData) {
+          return const MyHomePage(title: 'Home Page');
+        } else {
+          return const LoginPage();
+        }
+      },
     );
   }
 }
@@ -44,7 +73,6 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-
 
 class _MyHomePageState extends State<MyHomePage> {
   int _tabIndex = 1;
