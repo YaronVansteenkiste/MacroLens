@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:macro_lens/barcode_scanner.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
+
+  @override
+  _HomeContentState createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  List<Map<String, dynamic>> breakfastMeals = [];
+  List<Map<String, dynamic>> lunchMeals = [];
+  List<Map<String, dynamic>> dinnerMeals = [];
+  List<Map<String, dynamic>> snackMeals = [];
 
   @override
   Widget build(BuildContext context) {
@@ -15,16 +26,44 @@ class HomeContent extends StatelessWidget {
             _buildPieChart(),
             const SizedBox(height: 16),
             _buildMealSection(
-                'Breakfast',
-                530,
-                {'Granola 50g': 65, 'Skyr Natur 500g': 515},
-                Icons.breakfast_dining),
-            _buildMealSection('Lunch', 0, {}, Icons.lunch_dining),
-            _buildMealSection('Dinner', 0, {}, Icons.dinner_dining),
-            _buildMealSection('Snacks', 0, {}, Icons.fastfood),
+                'Breakfast', breakfastMeals, Icons.breakfast_dining),
+            _buildMealSection('Lunch', lunchMeals, Icons.lunch_dining),
+            _buildMealSection('Dinner', dinnerMeals, Icons.dinner_dining),
+            _buildMealSection('Snacks', snackMeals, Icons.fastfood),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const BarcodeScanner(),
+            ),
+          );
+          if (result != null && result is Map<String, dynamic>) {
+            setState(() {
+              switch (result['mealType']) {
+                case 'Breakfast':
+                  breakfastMeals.add(result);
+                  break;
+                case 'Lunch':
+                  lunchMeals.add(result);
+                  break;
+                case 'Dinner':
+                  dinnerMeals.add(result);
+                  break;
+                case 'Snacks':
+                  snackMeals.add(result);
+                  break;
+              }
+            });
+          }
+        },
+        backgroundColor: Colors.blueAccent,
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -83,8 +122,7 @@ class HomeContent extends StatelessWidget {
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     borderRadius: BorderRadius.circular(8),
-                    value: 2251 /
-                        2600, // Calculate the progress based on the calories
+                    value: 2251 / 2600,
                     backgroundColor: const Color.fromARGB(255, 21, 27, 35),
                     color: Colors.blueAccent,
                     minHeight: 10,
@@ -102,7 +140,7 @@ class HomeContent extends StatelessWidget {
   }
 
   Widget _buildMealSection(
-      String title, int calories, Map<String, int> foods, IconData icon) {
+      String title, List<Map<String, dynamic>> meals, IconData icon) {
     return Card(
       color: const Color.fromARGB(255, 23, 35, 49),
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -121,28 +159,62 @@ class HomeContent extends StatelessWidget {
                         fontSize: 18,
                         fontWeight: FontWeight.bold)),
                 const Spacer(),
-                Text('$calories calories',
+                Text('${_calculateTotalCalories(meals)} calories',
                     style: const TextStyle(color: Colors.white70)),
               ],
             ),
-            for (var entry in foods.entries)
+            for (var meal in meals)
               Padding(
                 padding: const EdgeInsets.only(left: 24, top: 4),
-                child: Text('${entry.key}: ${entry.value}',
+                child: Text('${meal['name']}: ${meal['calories']} calories',
                     style:
                         const TextStyle(color: Colors.white60, fontSize: 14)),
               ),
-            const Padding(
-              padding: EdgeInsets.only(left: 24, top: 4),
-              child: Text('ADD FOOD',
-                  style: TextStyle(
-                      color: Colors.blueAccent,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold)),
+            Padding(
+              padding: const EdgeInsets.only(left: 24, top: 4),
+              child: GestureDetector(
+                child: GestureDetector(
+                  onTap: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BarcodeScanner(),
+                      ),
+                    );
+                    if (result != null && result is Map<String, dynamic>) {
+                      setState(() {
+                        switch (title) {
+                          case 'Breakfast':
+                            breakfastMeals.add(result);
+                            break;
+                          case 'Lunch':
+                            lunchMeals.add(result);
+                            break;
+                          case 'Dinner':
+                            dinnerMeals.add(result);
+                            break;
+                          case 'Snacks':
+                            snackMeals.add(result);
+                            break;
+                        }
+                      });
+                    }
+                  },
+                  child: const Text('ADD FOOD',
+                      style: TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold)),
+                ),
+              ),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+int _calculateTotalCalories(List<Map<String, dynamic>> meals) {
+  return meals.fold(0, (sum, meal) => sum + (meal['calories'] as num).toInt());
 }
