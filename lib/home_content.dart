@@ -60,8 +60,8 @@ class _HomeContentState extends State<HomeContent> {
             });
           }
         },
-        child: const Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
