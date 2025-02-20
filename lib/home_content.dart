@@ -41,7 +41,7 @@ class _HomeContentState extends State<HomeContent> {
   Future<void> _saveMeals() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
         'breakfastMeals': breakfastMeals,
         'lunchMeals': lunchMeals,
         'dinnerMeals': dinnerMeals,
