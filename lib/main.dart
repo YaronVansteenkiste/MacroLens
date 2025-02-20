@@ -38,31 +38,29 @@ class MyApp extends StatelessWidget {
           titleLarge: TextStyle(color: Colors.white),
         ),
       ),
-      home: const AuthGate(),
+      home: const AuthWrapper(),
     );
   }
 }
 
-class AuthGate extends StatelessWidget {
-  const AuthGate({super.key});
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Something went wrong'));
-          } else if (snapshot.hasData) {
-            return const MyHomePage(title: 'Home Page');
-          } else {
-            return const LoginPage();
-          }
-        },
-      ),
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Something went wrong'));
+        } else if (snapshot.hasData) {
+          return const MyHomePage(title: 'Home Page');
+        } else {
+          return const LoginPage();
+        }
+      },
     );
   }
 }

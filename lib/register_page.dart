@@ -44,10 +44,12 @@ class _RegisterPageState extends State<RegisterPage> {
           'email': _emailController.text,
         });
 
+        await _auth.signOut(); 
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const MyHomePage(title: 'Home Page',), // Navigate to HomePage
+            builder: (context) => const LoginPage(), 
           ),
         );
       }
