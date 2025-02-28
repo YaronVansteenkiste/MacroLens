@@ -6,6 +6,7 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 
@@ -25,12 +26,10 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _errorMessage = e.message ?? 'An unknown error occurred';
       });
-      print('FirebaseAuthException: ${e.code} - ${e.message}');
     } catch (e) {
       setState(() {
         _errorMessage = 'An unknown error occurred';
       });
-      print('Exception: $e');
     }
   }
 

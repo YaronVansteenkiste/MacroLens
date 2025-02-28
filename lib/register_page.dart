@@ -8,6 +8,7 @@ class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _RegisterPageState createState() => _RegisterPageState();
 }
 
@@ -47,6 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
         await _auth.signOut(); 
 
         Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
             builder: (context) => const LoginPage(), 
@@ -57,12 +59,10 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         _errorMessage = e.message ?? 'An unknown error occurred';
       });
-      print('FirebaseAuthException: ${e.code} - ${e.message}');
     } catch (e) {
       setState(() {
         _errorMessage = 'An unknown error occurred';
       });
-      print('Exception: $e');
     }
   }
 

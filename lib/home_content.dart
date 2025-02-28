@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
-import 'package:firebase_auth/firebase_auth.dart'; // Add this import
+import 'package:cloud_firestore/cloud_firestore.dart'; 
+import 'package:firebase_auth/firebase_auth.dart'; 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:macro_lens/barcode_scanner.dart';
@@ -8,6 +8,7 @@ class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeContentState createState() => _HomeContentState();
 }
 
@@ -16,6 +17,7 @@ class _HomeContentState extends State<HomeContent> {
   List<Map<String, dynamic>> lunchMeals = [];
   List<Map<String, dynamic>> dinnerMeals = [];
   List<Map<String, dynamic>> snackMeals = [];
+  late num caloriesGoal;
 
   @override
   void initState() {
@@ -32,6 +34,7 @@ class _HomeContentState extends State<HomeContent> {
         lunchMeals = List<Map<String, dynamic>>.from(userDoc['lunchMeals'] ?? []);
         dinnerMeals = List<Map<String, dynamic>>.from(userDoc['dinnerMeals'] ?? []);
         snackMeals = List<Map<String, dynamic>>.from(userDoc['snackMeals'] ?? []);
+        caloriesGoal = userDoc['caloriesGoal'] ?? 0;
       });
     }
   }
@@ -135,7 +138,9 @@ class _HomeContentState extends State<HomeContent> {
     for (var meal in snackMeals) {
       totalCalories += meal['calories'] ?? 0;
     }
-    num remainingCalories = 2600 - totalCalories;
+    
+    
+    num remainingCalories = caloriesGoal - totalCalories;
 
     return Card(
       color: const Color.fromARGB(255, 23, 35, 49),
@@ -150,9 +155,9 @@ class _HomeContentState extends State<HomeContent> {
                 PieChartData(
                   sections: [
                     PieChartSectionData(
-                        value: totalCalories / 2600 * 100, color: Colors.blue, title: '${(totalCalories / 2600 * 100).toStringAsFixed(1)}%'),
+                        value: totalCalories / caloriesGoal * 100, color: Colors.blue, title: '${(totalCalories / caloriesGoal * 100).toStringAsFixed(1)}%'),
                     PieChartSectionData(
-                        value: (2600 - totalCalories) / 2600 * 100, color: Colors.grey, title: '${((2600 - totalCalories) / 2600 * 100).toStringAsFixed(1)}%'),
+                        value: (caloriesGoal - totalCalories) / caloriesGoal * 100, color: const Color.fromARGB(255, 65, 59, 173), title: '${((caloriesGoal - totalCalories) / caloriesGoal * 100).toStringAsFixed(1)}%'),
                   ],
                 ),
               ),
@@ -187,13 +192,13 @@ class _HomeContentState extends State<HomeContent> {
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     borderRadius: BorderRadius.circular(8),
-                    value: totalCalories / 2600,
+                    value: totalCalories / caloriesGoal,
                     backgroundColor: const Color.fromARGB(255, 21, 27, 35),
                     color: Colors.blueAccent,
                     minHeight: 10,
                   ),
                   const SizedBox(height: 8),
-                  Text('$totalCalories of 2600 calories',
+                  Text('$totalCalories of $caloriesGoal calories',
                       style: const TextStyle(color: Colors.white70)),
                 ],
               ),
@@ -287,6 +292,7 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   int _calculateTotalCalories(List<Map<String, dynamic>> meals) {
+    // ignore: avoid_types_as_parameter_names
     return meals.fold(0, (sum, meal) => sum + (meal['calories'] as num).toInt());
   }
 }
