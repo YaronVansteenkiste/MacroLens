@@ -16,6 +16,7 @@ class _DashboardPageState extends State<DashboardPage> {
   double totalCarbs = 0;
   double totalSodium = 0;
   double totalSugar = 0;
+  double totalFat = 0;
 
   @override
   void initState() {
@@ -54,6 +55,10 @@ class _DashboardPageState extends State<DashboardPage> {
                        _calculateTotal(lunchMeals, 'sugar') +
                        _calculateTotal(snackMeals, 'sugar') +
                        _calculateTotal(dinnerMeals, 'sugar');
+          totalFat = _calculateTotal(breakfastMeals, 'fat') +
+                     _calculateTotal(lunchMeals, 'fat') +
+                     _calculateTotal(snackMeals, 'fat') +
+                     _calculateTotal(dinnerMeals, 'fat');
         });
       }
     }
@@ -67,10 +72,6 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nutrition Dashboard'),
-        backgroundColor: Colors.green,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -81,18 +82,29 @@ class _DashboardPageState extends State<DashboardPage> {
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: [
-                  _buildNutritionBubble('Total Calories', '$totalCalories kcal'),
-                  _buildNutritionBubble('Protein', '$totalProtein g'),
-                  _buildNutritionBubble('Carbs', '$totalCarbs g'),
-                  _buildNutritionBubble('Sodium', '$totalSodium mg'),
-                  _buildNutritionBubble('Sugar', '$totalSugar g'),
-                ],
+            SizedBox(
+              height: 100,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  final nutritionIndex = index % 6;
+                  switch (nutritionIndex) {
+                    case 0:
+                      return _buildNutritionBubble('Total Calories', '$totalCalories kcal');
+                    case 1:
+                      return _buildNutritionBubble('Protein', '$totalProtein g');
+                    case 2:
+                      return _buildNutritionBubble('Carbs', '$totalCarbs g');
+                    case 3:
+                      return _buildNutritionBubble('Sodium', '$totalSodium mg');
+                    case 4:
+                      return _buildNutritionBubble('Sugar', '$totalSugar g');
+                    case 5:
+                      return _buildNutritionBubble('Fat', '$totalFat g');
+                    default:
+                      return Container();
+                  }
+                },
               ),
             ),
           ],
@@ -103,23 +115,25 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildNutritionBubble(String title, String value) {
     return Container(
+      width: 80,
+      margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
-        color: Colors.green[100],
+        color: const Color.fromARGB(255, 24, 86, 137),
         shape: BoxShape.circle,
       ),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Text(
             value,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blue),
             textAlign: TextAlign.center,
           ),
         ],

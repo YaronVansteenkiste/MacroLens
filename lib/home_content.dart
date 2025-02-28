@@ -18,6 +18,7 @@ class _HomeContentState extends State<HomeContent> {
   List<Map<String, dynamic>> dinnerMeals = [];
   List<Map<String, dynamic>> snackMeals = [];
   late num caloriesGoal;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -34,7 +35,8 @@ class _HomeContentState extends State<HomeContent> {
         lunchMeals = List<Map<String, dynamic>>.from(userDoc['lunchMeals'] ?? []);
         dinnerMeals = List<Map<String, dynamic>>.from(userDoc['dinnerMeals'] ?? []);
         snackMeals = List<Map<String, dynamic>>.from(userDoc['snackMeals'] ?? []);
-        caloriesGoal = userDoc['caloriesGoal'] ?? 0;
+        caloriesGoal = userDoc['caloriesGoal'] ?? 2000;
+        isLoading = false;
       });
     }
   }
@@ -74,21 +76,23 @@ class _HomeContentState extends State<HomeContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildPieChart(),
-            const SizedBox(height: 16),
-            _buildMealSection(
-                'Breakfast', breakfastMeals, Icons.breakfast_dining),
-            _buildMealSection('Lunch', lunchMeals, Icons.lunch_dining),
-            _buildMealSection('Dinner', dinnerMeals, Icons.dinner_dining),
-            _buildMealSection('Snacks', snackMeals, Icons.fastfood),
-          ],
-        ),
-      ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildPieChart(),
+                  const SizedBox(height: 16),
+                  _buildMealSection(
+                      'Breakfast', breakfastMeals, Icons.breakfast_dining),
+                  _buildMealSection('Lunch', lunchMeals, Icons.lunch_dining),
+                  _buildMealSection('Dinner', dinnerMeals, Icons.dinner_dining),
+                  _buildMealSection('Snacks', snackMeals, Icons.fastfood),
+                ],
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final result = await Navigator.push(
