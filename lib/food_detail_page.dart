@@ -8,6 +8,8 @@ class FoodDetailPage extends StatefulWidget {
   final double sugar;
   final double fat;
   final String mealType;
+  final bool isEditing;
+  final int? index;
 
   const FoodDetailPage({
     super.key,
@@ -18,6 +20,8 @@ class FoodDetailPage extends StatefulWidget {
     required this.sugar,
     required this.fat,
     required this.mealType,
+    this.isEditing = false,
+    this.index,
   });
 
   @override
@@ -27,7 +31,7 @@ class FoodDetailPage extends StatefulWidget {
 class _FoodDetailPageState extends State<FoodDetailPage> {
   double amount = 100.0;
 
-  void _addFoodToHomePage() {
+  void _saveFood() {
     Navigator.pop(context, {
       'name': widget.product,
       'calories': double.parse((widget.calories * amount / 100).toStringAsFixed(1)),
@@ -36,6 +40,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       'sugar': double.parse((widget.sugar * amount / 100).toStringAsFixed(1)),
       'fat': double.parse((widget.fat * amount / 100).toStringAsFixed(1)),
       'mealType': widget.mealType,
+      'isEditing': widget.isEditing,
+      'index': widget.index,
     });
   }
 
@@ -104,8 +110,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _addFoodToHomePage,
-              child: const Text('Add'),
+              onPressed: _saveFood,
+              child: const Text('Save'),
             ),
           ],
         ),
