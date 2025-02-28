@@ -1,10 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
+import 'package:firebase_auth/firebase_auth.dart'; // Add this import
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:macro_lens/barcode_scanner.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Add this import
-import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
-import 'dart:convert';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
@@ -124,6 +122,21 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Widget _buildPieChart() {
+    num totalCalories = 0;
+    for (var meal in breakfastMeals) {
+      totalCalories += meal['calories'] ?? 0;
+    }
+    for (var meal in lunchMeals) {
+      totalCalories += meal['calories'] ?? 0;
+    }
+    for (var meal in dinnerMeals) {
+      totalCalories += meal['calories'] ?? 0;
+    }
+    for (var meal in snackMeals) {
+      totalCalories += meal['calories'] ?? 0;
+    }
+    num remainingCalories = 2600 - totalCalories;
+
     return Card(
       color: const Color.fromARGB(255, 23, 35, 49),
       child: Padding(
@@ -137,13 +150,9 @@ class _HomeContentState extends State<HomeContent> {
                 PieChartData(
                   sections: [
                     PieChartSectionData(
-                        value: 40, color: Colors.blue, title: '40%'),
+                        value: totalCalories / 2600 * 100, color: Colors.blue, title: '${(totalCalories / 2600 * 100).toStringAsFixed(1)}%'),
                     PieChartSectionData(
-                        value: 30, color: Colors.orange, title: '30%'),
-                    PieChartSectionData(
-                        value: 20, color: Colors.yellow, title: '20%'),
-                    PieChartSectionData(
-                        value: 10, color: Colors.green, title: '10%'),
+                        value: (2600 - totalCalories) / 2600 * 100, color: Colors.grey, title: '${((2600 - totalCalories) / 2600 * 100).toStringAsFixed(1)}%'),
                   ],
                 ),
               ),
@@ -154,17 +163,17 @@ class _HomeContentState extends State<HomeContent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RichText(
-                    text: const TextSpan(
+                    text: TextSpan(
                       children: [
                         TextSpan(
-                          text: '349 calories',
-                          style: TextStyle(
+                          text: remainingCalories.toString(),
+                          style: const TextStyle(
                             color: Color.fromARGB(255, 0, 122, 255),
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: ' remaining',
                           style: TextStyle(
                             color: Colors.blueGrey,
@@ -178,13 +187,13 @@ class _HomeContentState extends State<HomeContent> {
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     borderRadius: BorderRadius.circular(8),
-                    value: 2251 / 2600,
+                    value: totalCalories / 2600,
                     backgroundColor: const Color.fromARGB(255, 21, 27, 35),
                     color: Colors.blueAccent,
                     minHeight: 10,
                   ),
                   const SizedBox(height: 8),
-                  Text('2251 of 2600 calories',
+                  Text('$totalCalories of 2600 calories',
                       style: const TextStyle(color: Colors.white70)),
                 ],
               ),

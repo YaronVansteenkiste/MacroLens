@@ -33,7 +33,7 @@ Widget buildBottomNavBar(int tabIndex, PageController pageController, {required 
     circleWidth: 60,
     activeIndex: tabIndex,
     onTap: (index) {
-      onTabChanged(index); // Call the passed callback
+      onTabChanged(index); 
     },
     padding: const EdgeInsets.only(left: 16, right: 16, bottom: 20),
     cornerRadius: const BorderRadius.only(

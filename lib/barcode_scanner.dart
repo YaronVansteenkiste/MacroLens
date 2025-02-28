@@ -19,7 +19,7 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
   String fat = "No result";
 
   final List<String> mealTypes = ["Breakfast", "Lunch", "Dinner", "Snacks"];
-  String selectedMealType = "Breakfast"; // Default meal type
+  String selectedMealType = "Breakfast"; 
 
   @override
   Widget build(BuildContext context) {
