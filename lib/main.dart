@@ -1,19 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart'; 
 import 'package:flutter/material.dart';
 import 'package:macro_lens/barcode_scanner.dart';
 import 'package:macro_lens/dashboard_page.dart';
 import 'package:macro_lens/home_content.dart';
 import 'package:macro_lens/profile_page.dart';
+import 'package:provider/provider.dart';
+
 import 'bottom_nav_bar.dart';
 import 'login_page.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'firebase_options.dart';
+import 'app_state.dart';
+import 'firebase_options.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp(options: firebaseOptions);
-  }
+  print('Initializing Firebase...');
+  await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform);
+  print('Firebase initialized');
   runApp(const MyApp());
 }
 
@@ -22,24 +26,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'MacroLens',
-      theme: ThemeData(
-        primaryColor: const Color(0xFF4A90E2),
-        hintColor: const Color(0xFF00BCD4),
-        scaffoldBackgroundColor: const Color.fromARGB(255, 21, 27, 35),
-        appBarTheme: const AppBarTheme(
-          color: Color(0xFF1E1E1E),
-          iconTheme: IconThemeData(color: Colors.white),
+    return ChangeNotifierProvider(
+      create: (context) => ApplicationState(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'MacroLens',
+        theme: ThemeData(
+          primaryColor: const Color(0xFF4A90E2),
+          hintColor: const Color(0xFF00BCD4),
+          scaffoldBackgroundColor: const Color.fromARGB(255, 21, 27, 35),
+          appBarTheme: const AppBarTheme(
+            color: Color(0xFF1E1E1E),
+            iconTheme: IconThemeData(color: Colors.white),
+          ),
+          textTheme: const TextTheme(
+            bodyLarge: TextStyle(color: Colors.white),
+            bodyMedium: TextStyle(color: Colors.white70),
+            titleLarge: TextStyle(color: Colors.white),
+          ),
         ),
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(color: Colors.white),
-          bodyMedium: TextStyle(color: Colors.white70),
-          titleLarge: TextStyle(color: Colors.white),
-        ),
+        home: const AuthWrapper(),
       ),
-      home: const AuthWrapper(),
     );
   }
 }

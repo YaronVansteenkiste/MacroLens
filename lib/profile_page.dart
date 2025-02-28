@@ -118,111 +118,113 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('assets/images/profile_blank.jpg'),
-              ),
-              SizedBox(height: 20),
-              Text('First Name: $firstName', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              Text('Last Name: $lastName', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(labelText: 'Current Weight (kg)'),
-                keyboardType: TextInputType.number,
-                controller: TextEditingController(text: weight.toString()),
-                onChanged: (value) {
-                  weight = int.parse(value);
-                },
-              ),
-              TextField(
-                decoration: InputDecoration(labelText: 'Goal Weight (kg)'),
-                keyboardType: TextInputType.number,
-                controller: TextEditingController(text: goalWeight.toString()),
-                onChanged: (value) {
-                  goalWeight = int.parse(value);
-                },
-              ),
-              TextField(
-                decoration: InputDecoration(labelText: 'Height (cm)'),
-                keyboardType: TextInputType.number,
-                controller: TextEditingController(text: height.toString()),
-                onChanged: (value) {
-                  height = int.parse(value);
-                },
-              ),
-              TextField(
-                decoration: InputDecoration(labelText: 'Age'),
-                keyboardType: TextInputType.number,
-                controller: TextEditingController(text: age.toString()),
-                onChanged: (value) {
-                  age = int.parse(value);
-                },
-              ),
-              SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                value: sex,
-                decoration: InputDecoration(
-                  labelText: 'Sex',
-                  border: OutlineInputBorder(),
+      body: SingleChildScrollView( // Wrap content in SingleChildScrollView
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: AssetImage('assets/images/profile_blank.jpg'),
                 ),
-                dropdownColor: const Color.fromARGB(255, 23, 35, 49),
-                style: TextStyle(color: Colors.white),
-                items: ['male', 'female'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value.capitalize()),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    sex = newValue!;
-                  });
-                },
-              ),
-              SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                value: activityLevel,
-                decoration: InputDecoration(
-                  labelText: 'Activity Level',
-                  border: OutlineInputBorder(),
+                SizedBox(height: 20),
+                Text('First Name: $firstName', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text('Last Name: $lastName', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                SizedBox(height: 20),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Current Weight (kg)'),
+                  keyboardType: TextInputType.number,
+                  controller: TextEditingController(text: weight.toString()),
+                  onChanged: (value) {
+                    weight = int.parse(value);
+                  },
                 ),
-               dropdownColor: const Color.fromARGB(255, 23, 35, 49),
-                style: TextStyle(color: Colors.white),
-                items: ['Sedentary', 'Light', 'Moderate', 'Active', 'Super Active'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    activityLevel = newValue!;
-                  });
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _calculateCaloriesGoal,
-                child: Text('Set Calories Goal'),
-              ),
-              SizedBox(height: 20),
-              Text('Calories Goal: $caloriesGoal', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  // ignore: use_build_context_synchronously
-                  Navigator.pushReplacementNamed(context, '/login');
-                },
-                child: Text('Log Out'),
-              ),
-            ],
+                TextField(
+                  decoration: InputDecoration(labelText: 'Goal Weight (kg)'),
+                  keyboardType: TextInputType.number,
+                  controller: TextEditingController(text: goalWeight.toString()),
+                  onChanged: (value) {
+                    goalWeight = int.parse(value);
+                  },
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Height (cm)'),
+                  keyboardType: TextInputType.number,
+                  controller: TextEditingController(text: height.toString()),
+                  onChanged: (value) {
+                    height = int.parse(value);
+                  },
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Age'),
+                  keyboardType: TextInputType.number,
+                  controller: TextEditingController(text: age.toString()),
+                  onChanged: (value) {
+                    age = int.parse(value);
+                  },
+                ),
+                SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  value: sex,
+                  decoration: InputDecoration(
+                    labelText: 'Sex',
+                    border: OutlineInputBorder(),
+                  ),
+                  dropdownColor: const Color.fromARGB(255, 23, 35, 49),
+                  style: TextStyle(color: Colors.white),
+                  items: ['male', 'female'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value.capitalize()),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      sex = newValue!;
+                    });
+                  },
+                ),
+                SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  value: activityLevel,
+                  decoration: InputDecoration(
+                    labelText: 'Activity Level',
+                    border: OutlineInputBorder(),
+                  ),
+                 dropdownColor: const Color.fromARGB(255, 23, 35, 49),
+                  style: TextStyle(color: Colors.white),
+                  items: ['Sedentary', 'Light', 'Moderate', 'Active', 'Super Active'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      activityLevel = newValue!;
+                    });
+                  },
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _calculateCaloriesGoal,
+                  child: Text('Set Calories Goal'),
+                ),
+                SizedBox(height: 20),
+                Text('Calories Goal: $caloriesGoal', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                    // ignore: use_build_context_synchronously
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
+                  child: Text('Log Out'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
