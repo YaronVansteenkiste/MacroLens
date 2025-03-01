@@ -73,24 +73,30 @@ class _HomeContentState extends State<HomeContent> {
     });
   }
 
+  String _shortenMealName(String name) {
+    return name.length > 12 ? '${name.substring(0, 12)}...' : name;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildPieChart(),
-                  const SizedBox(height: 16),
-                  _buildMealSection(
-                      'Breakfast', breakfastMeals, Icons.breakfast_dining),
-                  _buildMealSection('Lunch', lunchMeals, Icons.lunch_dining),
-                  _buildMealSection('Dinner', dinnerMeals, Icons.dinner_dining),
-                  _buildMealSection('Snacks', snackMeals, Icons.fastfood),
-                ],
+          : SingleChildScrollView( // Added SingleChildScrollView
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildPieChart(),
+                    const SizedBox(height: 16),
+                    _buildMealSection(
+                        'Breakfast', breakfastMeals, Icons.breakfast_dining),
+                    _buildMealSection('Lunch', lunchMeals, Icons.lunch_dining),
+                    _buildMealSection('Dinner', dinnerMeals, Icons.dinner_dining),
+                    _buildMealSection('Snacks', snackMeals, Icons.fastfood),
+                  ],
+                ),
               ),
             ),
       floatingActionButton: FloatingActionButton(
@@ -159,9 +165,9 @@ class _HomeContentState extends State<HomeContent> {
                 PieChartData(
                   sections: [
                     PieChartSectionData(
-                        value: totalCalories / caloriesGoal * 100, color: Colors.blue, title: '${(totalCalories / caloriesGoal * 100).toStringAsFixed(1)}%'),
+                        value: (totalCalories / caloriesGoal * 100).roundToDouble(), color: Colors.blue, title: '${(totalCalories / caloriesGoal * 100).round()}%'),
                     PieChartSectionData(
-                        value: (caloriesGoal - totalCalories) / caloriesGoal * 100, color: const Color.fromARGB(255, 65, 59, 173), title: '${((caloriesGoal - totalCalories) / caloriesGoal * 100).toStringAsFixed(1)}%'),
+                        value: ((caloriesGoal - totalCalories) / caloriesGoal * 100).roundToDouble(), color: const Color.fromARGB(255, 65, 59, 173), title: '${((caloriesGoal - totalCalories) / caloriesGoal * 100).round()}%'),
                   ],
                 ),
               ),
@@ -175,7 +181,7 @@ class _HomeContentState extends State<HomeContent> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: remainingCalories.toString(),
+                          text: remainingCalories.round().toString(),
                           style: const TextStyle(
                             color: Color.fromARGB(255, 0, 122, 255),
                             fontSize: 16,
@@ -202,7 +208,7 @@ class _HomeContentState extends State<HomeContent> {
                     minHeight: 10,
                   ),
                   const SizedBox(height: 8),
-                  Text('$totalCalories of $caloriesGoal calories',
+                  Text('${totalCalories.round()} of ${caloriesGoal.round()} calories',
                       style: const TextStyle(color: Colors.white70)),
                 ],
               ),
@@ -243,7 +249,7 @@ class _HomeContentState extends State<HomeContent> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${meals[i]['name']}: ${meals[i]['calories']} calories',
+                    Text('${_shortenMealName(meals[i]['name'])}: ${meals[i]['calories']} calories',
                         style: const TextStyle(color: Colors.white60, fontSize: 14)),
                     IconButton(
                       icon: const Icon(Icons.delete, color: Colors.redAccent),

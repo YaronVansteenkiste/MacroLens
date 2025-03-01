@@ -41,6 +41,10 @@ flutter:
   assets:
     - assets/icons/icon.png
     - assets/images/profile_blank.jpg
+    - assets/images/meal_0.jpg
+    - assets/images/meal_1.jpg
+    - assets/images/meal_2.jpg
+    - assets/images/meal_3.jpg
     - assets/videos/scanning_barcode.mp4
 
 dependency_overrides:
