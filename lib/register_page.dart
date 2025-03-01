@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -57,12 +57,10 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         _errorMessage = e.message ?? 'An unknown error occurred';
       });
-      print('FirebaseAuthException: ${e.code} - ${e.message}');
     } catch (e) {
       setState(() {
         _errorMessage = 'An unknown error occurred';
       });
-      print('Exception: $e');
     }
   }
 

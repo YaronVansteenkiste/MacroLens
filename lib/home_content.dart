@@ -1,10 +1,9 @@
+import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:macro_lens/barcode_scanner.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Add this import
-import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
-import 'dart:convert';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
@@ -18,6 +17,10 @@ class _HomeContentState extends State<HomeContent> {
   List<Map<String, dynamic>> lunchMeals = [];
   List<Map<String, dynamic>> dinnerMeals = [];
   List<Map<String, dynamic>> snackMeals = [];
+  late num caloriesGoal;
+  bool isLoading = true;
+  final ScrollController _scrollController = ScrollController();
+  final AudioPlayer audioPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -34,6 +37,8 @@ class _HomeContentState extends State<HomeContent> {
         lunchMeals = List<Map<String, dynamic>>.from(userDoc['lunchMeals'] ?? []);
         dinnerMeals = List<Map<String, dynamic>>.from(userDoc['dinnerMeals'] ?? []);
         snackMeals = List<Map<String, dynamic>>.from(userDoc['snackMeals'] ?? []);
+        caloriesGoal = userDoc['caloriesGoal'] ?? 2000;
+        isLoading = false;
       });
     }
   }
@@ -51,43 +56,74 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   void _removeMeal(String mealType, int index) {
-    setState(() {
-      switch (mealType) {
-        case 'Breakfast':
-          breakfastMeals.removeAt(index);
-          break;
-        case 'Lunch':
-          lunchMeals.removeAt(index);
-          break;
-        case 'Dinner':
-          dinnerMeals.removeAt(index);
-          break;
-        case 'Snacks':
-          snackMeals.removeAt(index);
-          break;
-      }
-      _saveMeals();
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove Meal'),
+          content: const Text('Are you sure you want to remove this meal?', style: TextStyle(color: Colors.black),),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Remove'),
+              onPressed: () async {
+                setState(() {
+                  switch (mealType) {
+                    case 'Breakfast':
+                      breakfastMeals.removeAt(index);
+                      break;
+                    case 'Lunch':
+                      lunchMeals.removeAt(index);
+                      break;
+                    case 'Dinner':
+                      dinnerMeals.removeAt(index);
+                      break;
+                    case 'Snacks':
+                      snackMeals.removeAt(index);
+                      break;
+                  }
+                  _saveMeals();
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String _shortenMealName(String name) {
+    return name.length > 12 ? '${name.substring(0, 12)}...' : name;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildPieChart(),
-            const SizedBox(height: 16),
-            _buildMealSection(
-                'Breakfast', breakfastMeals, Icons.breakfast_dining),
-            _buildMealSection('Lunch', lunchMeals, Icons.lunch_dining),
-            _buildMealSection('Dinner', dinnerMeals, Icons.dinner_dining),
-            _buildMealSection('Snacks', snackMeals, Icons.fastfood),
-          ],
-        ),
-      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              controller: _scrollController,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildPieChart(),
+                    const SizedBox(height: 16),
+                    _buildMealSection('Breakfast', breakfastMeals, Icons.breakfast_dining),
+                    _buildMealSection('Lunch', lunchMeals, Icons.lunch_dining),
+                    _buildMealSection('Dinner', dinnerMeals, Icons.dinner_dining),
+                    _buildMealSection('Snacks', snackMeals, Icons.fastfood),
+                  ],
+                ),
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final result = await Navigator.push(
@@ -124,6 +160,22 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Widget _buildPieChart() {
+    num totalCalories = 0;
+    for (var meal in breakfastMeals) {
+      totalCalories += meal['calories'] ?? 0;
+    }
+    for (var meal in lunchMeals) {
+      totalCalories += meal['calories'] ?? 0;
+    }
+    for (var meal in dinnerMeals) {
+      totalCalories += meal['calories'] ?? 0;
+    }
+    for (var meal in snackMeals) {
+      totalCalories += meal['calories'] ?? 0;
+    }
+
+    num remainingCalories = caloriesGoal - totalCalories;
+
     return Card(
       color: const Color.fromARGB(255, 23, 35, 49),
       child: Padding(
@@ -137,13 +189,9 @@ class _HomeContentState extends State<HomeContent> {
                 PieChartData(
                   sections: [
                     PieChartSectionData(
-                        value: 40, color: Colors.blue, title: '40%'),
+                        value: (totalCalories / caloriesGoal * 100).roundToDouble(), color: Colors.blue, title: '${(totalCalories / caloriesGoal * 100).round()}%'),
                     PieChartSectionData(
-                        value: 30, color: Colors.orange, title: '30%'),
-                    PieChartSectionData(
-                        value: 20, color: Colors.yellow, title: '20%'),
-                    PieChartSectionData(
-                        value: 10, color: Colors.green, title: '10%'),
+                        value: ((caloriesGoal - totalCalories) / caloriesGoal * 100).roundToDouble(), color: const Color.fromARGB(255, 65, 59, 173), title: '${((caloriesGoal - totalCalories) / caloriesGoal * 100).round()}%'),
                   ],
                 ),
               ),
@@ -154,17 +202,17 @@ class _HomeContentState extends State<HomeContent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RichText(
-                    text: const TextSpan(
+                    text: TextSpan(
                       children: [
                         TextSpan(
-                          text: '349 calories',
-                          style: TextStyle(
+                          text: remainingCalories.round().toString(),
+                          style: const TextStyle(
                             color: Color.fromARGB(255, 0, 122, 255),
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: ' remaining',
                           style: TextStyle(
                             color: Colors.blueGrey,
@@ -178,13 +226,13 @@ class _HomeContentState extends State<HomeContent> {
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     borderRadius: BorderRadius.circular(8),
-                    value: 2251 / 2600,
+                    value: totalCalories / caloriesGoal,
                     backgroundColor: const Color.fromARGB(255, 21, 27, 35),
                     color: Colors.blueAccent,
                     minHeight: 10,
                   ),
                   const SizedBox(height: 8),
-                  Text('2251 of 2600 calories',
+                  Text('${totalCalories.round()} of ${caloriesGoal.round()} calories',
                       style: const TextStyle(color: Colors.white70)),
                 ],
               ),
@@ -195,8 +243,7 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 
-  Widget _buildMealSection(
-      String title, List<Map<String, dynamic>> meals, IconData icon) {
+  Widget _buildMealSection(String title, List<Map<String, dynamic>> meals, IconData icon) {
     return Card(
       color: const Color.fromARGB(255, 23, 35, 49),
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -225,11 +272,14 @@ class _HomeContentState extends State<HomeContent> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${meals[i]['name']}: ${meals[i]['calories']} calories',
+                    Text('${_shortenMealName(meals[i]['name'])}: ${meals[i]['calories']} calories',
                         style: const TextStyle(color: Colors.white60, fontSize: 14)),
                     IconButton(
                       icon: const Icon(Icons.delete, color: Colors.redAccent),
-                      onPressed: () => _removeMeal(title, i),
+                      onPressed: () {
+                        audioPlayer.play(AssetSource('audio/ui-sound.mp3'), volume: 1);
+                        _removeMeal(title, i);
+                      }
                     ),
                   ],
                 ),
@@ -238,6 +288,7 @@ class _HomeContentState extends State<HomeContent> {
               padding: const EdgeInsets.only(left: 24, top: 4),
               child: GestureDetector(
                 onTap: () async {
+                   audioPlayer.play(AssetSource('audio/ui-sound1.mp3'), volume: 1);
                   final result = await Navigator.push(
                     context,
                     MaterialPageRoute(

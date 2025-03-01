@@ -25,12 +25,10 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _errorMessage = e.message ?? 'An unknown error occurred';
       });
-      print('FirebaseAuthException: ${e.code} - ${e.message}');
     } catch (e) {
       setState(() {
         _errorMessage = 'An unknown error occurred';
       });
-      print('Exception: $e');
     }
   }
 
