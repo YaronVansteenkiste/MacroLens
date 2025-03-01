@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart'; 
-import 'package:firebase_auth/firebase_auth.dart'; 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:macro_lens/barcode_scanner.dart';
@@ -53,23 +53,46 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   void _removeMeal(String mealType, int index) {
-    setState(() {
-      switch (mealType) {
-        case 'Breakfast':
-          breakfastMeals.removeAt(index);
-          break;
-        case 'Lunch':
-          lunchMeals.removeAt(index);
-          break;
-        case 'Dinner':
-          dinnerMeals.removeAt(index);
-          break;
-        case 'Snacks':
-          snackMeals.removeAt(index);
-          break;
-      }
-      _saveMeals();
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove Meal'),
+          content: const Text('Are you sure you want to remove this meal?', style: TextStyle(color: Colors.black),),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Remove'),
+              onPressed: () {
+                setState(() {
+                  switch (mealType) {
+                    case 'Breakfast':
+                      breakfastMeals.removeAt(index);
+                      break;
+                    case 'Lunch':
+                      lunchMeals.removeAt(index);
+                      break;
+                    case 'Dinner':
+                      dinnerMeals.removeAt(index);
+                      break;
+                    case 'Snacks':
+                      snackMeals.removeAt(index);
+                      break;
+                  }
+                  _saveMeals();
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   String _shortenMealName(String name) {
@@ -80,8 +103,8 @@ class _HomeContentState extends State<HomeContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView( 
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -89,8 +112,7 @@ class _HomeContentState extends State<HomeContent> {
                   children: [
                     _buildPieChart(),
                     const SizedBox(height: 16),
-                    _buildMealSection(
-                        'Breakfast', breakfastMeals, Icons.breakfast_dining),
+                    _buildMealSection('Breakfast', breakfastMeals, Icons.breakfast_dining),
                     _buildMealSection('Lunch', lunchMeals, Icons.lunch_dining),
                     _buildMealSection('Dinner', dinnerMeals, Icons.dinner_dining),
                     _buildMealSection('Snacks', snackMeals, Icons.fastfood),
@@ -147,8 +169,7 @@ class _HomeContentState extends State<HomeContent> {
     for (var meal in snackMeals) {
       totalCalories += meal['calories'] ?? 0;
     }
-    
-    
+
     num remainingCalories = caloriesGoal - totalCalories;
 
     return Card(
@@ -218,8 +239,7 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 
-  Widget _buildMealSection(
-      String title, List<Map<String, dynamic>> meals, IconData icon) {
+  Widget _buildMealSection(String title, List<Map<String, dynamic>> meals, IconData icon) {
     return Card(
       color: const Color.fromARGB(255, 23, 35, 49),
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -301,7 +321,6 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   int _calculateTotalCalories(List<Map<String, dynamic>> meals) {
-    // ignore: avoid_types_as_parameter_names
     return meals.fold(0, (sum, meal) => sum + (meal['calories'] as num).toInt());
   }
 }

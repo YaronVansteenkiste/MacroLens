@@ -2,7 +2,7 @@
 - [x] Je app bevat zowel stateless als stateful widgets.
 - [x] Je app bevat minimaal 4 verschillende' pagina's (routes).
 - [ ] Je app bevat minimaal één video- en één geluidsbestand.
-- [ ] Je app bevat afbeeldingen.
+- [x] Je app bevat afbeeldingen.
 - [x] Je app bevat minimaal één scrolbare lijst van gelijkvormige elementen.
 - [x] Je app maakt op minimaal één plaats gebruik van dynamische navigatie ( bvb. om van een lijst naar een detail element te navigeren ).
 - [ ] Je app bevat minimaal één dialoogvenster (bvb. om de gebruiker te informeren over een bepaalde uitgevoerde actie, om de gebruiker een beperkte keuze in -  het uitvoeren van een taak aan te bieden,...).
