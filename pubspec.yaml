@@ -9,6 +9,7 @@ environment:
   sdk: "^3.6.1"
 
 dependencies:
+  audioplayers: ^6.1.0
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
@@ -46,6 +47,8 @@ flutter:
     - assets/images/meal_2.jpg
     - assets/images/meal_3.jpg
     - assets/videos/scanning_barcode.mp4
+    - assets/audio/ui-sound.mp3
+    - assets/audio/ui-sound1.mp3
 
 dependency_overrides:
   intl: ^0.18.0

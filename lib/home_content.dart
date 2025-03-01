@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -18,6 +19,8 @@ class _HomeContentState extends State<HomeContent> {
   List<Map<String, dynamic>> snackMeals = [];
   late num caloriesGoal;
   bool isLoading = true;
+  final ScrollController _scrollController = ScrollController();
+  final AudioPlayer audioPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -68,7 +71,7 @@ class _HomeContentState extends State<HomeContent> {
             ),
             TextButton(
               child: const Text('Remove'),
-              onPressed: () {
+              onPressed: () async {
                 setState(() {
                   switch (mealType) {
                     case 'Breakfast':
@@ -105,6 +108,7 @@ class _HomeContentState extends State<HomeContent> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
+              controller: _scrollController,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -272,7 +276,10 @@ class _HomeContentState extends State<HomeContent> {
                         style: const TextStyle(color: Colors.white60, fontSize: 14)),
                     IconButton(
                       icon: const Icon(Icons.delete, color: Colors.redAccent),
-                      onPressed: () => _removeMeal(title, i),
+                      onPressed: () {
+                        audioPlayer.play(AssetSource('audio/ui-sound.mp3'), volume: 1);
+                        _removeMeal(title, i);
+                      }
                     ),
                   ],
                 ),
@@ -281,6 +288,7 @@ class _HomeContentState extends State<HomeContent> {
               padding: const EdgeInsets.only(left: 24, top: 4),
               child: GestureDetector(
                 onTap: () async {
+                   audioPlayer.play(AssetSource('audio/ui-sound1.mp3'), volume: 1);
                   final result = await Navigator.push(
                     context,
                     MaterialPageRoute(

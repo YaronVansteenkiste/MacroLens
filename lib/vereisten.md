@@ -5,9 +5,9 @@
 - [x] Je app bevat afbeeldingen.
 - [x] Je app bevat minimaal één scrolbare lijst van gelijkvormige elementen.
 - [x] Je app maakt op minimaal één plaats gebruik van dynamische navigatie ( bvb. om van een lijst naar een detail element te navigeren ).
-- [ ] Je app bevat minimaal één dialoogvenster (bvb. om de gebruiker te informeren over een bepaalde uitgevoerde actie, om de gebruiker een beperkte keuze in -  het uitvoeren van een taak aan te bieden,...).
+- [x] Je app bevat minimaal één dialoogvenster (bvb. om de gebruiker te informeren over een bepaalde uitgevoerde actie, om de gebruiker een beperkte keuze in -  het uitvoeren van een taak aan te bieden,...).
 - [x] Je app bevat een of meerdere invoerschermen waar minimaal gebruik gemaakt wordt van tekstinvoer, een keuze-invoer (radio-buttons en/of switches of checkboxes), en een dropdownmenu.
-- [ ] Je app maakt op minimaal één plaats gebruik van animatie.
-- [ ] Je app maakt gebruik van een bibliotheekbestand om gemeenschappelijke informatie op te halen en weg te schrijven; optioneel kan je app hiervoor ook gebruik maken van een inherited widget, indien toepasselijk.
-- [ ] Je app maakt gebruik van gegevens uit een online bron; dat kan een externe website zijn, een externe databank of een andere externe bron.
+- [x] Je app maakt op minimaal één plaats gebruik van animatie.
+- [x] Je app maakt gebruik van een bibliotheekbestand om gemeenschappelijke informatie op te halen en weg te schrijven; optioneel kan je app hiervoor ook gebruik maken van een inherited widget, indien toepasselijk.
+- [x] Je app maakt gebruik van gegevens uit een online bron; dat kan een externe website zijn, een externe databank of een andere externe bron.
 Je app ziet er goed uit.

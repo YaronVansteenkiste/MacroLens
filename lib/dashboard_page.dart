@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'library.dart'; // Import the shared library
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -17,7 +18,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   double totalSugar = 0;
   double totalFat = 0;
   late ScrollController _scrollController;
-  num caloriesGoal = 2000; 
+  num caloriesGoal = defaultCaloriesGoal; // Use the shared constant
 
   List<Map<String, dynamic>> breakfastMeals = [];
   List<Map<String, dynamic>> lunchMeals = [];
@@ -43,7 +44,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
         lunchMeals = List<Map<String, dynamic>>.from(data?['lunchMeals'] ?? []);
         snackMeals = List<Map<String, dynamic>>.from(data?['snackMeals'] ?? []);
         dinnerMeals = List<Map<String, dynamic>>.from(data?['dinnerMeals'] ?? []);
-        caloriesGoal = data?['caloriesGoal'] ?? 2000;
+        caloriesGoal = data?['caloriesGoal'] ?? defaultCaloriesGoal;
 
         setState(() {
           totalCalories = _calculateTotal(breakfastMeals, 'calories') +
@@ -126,17 +127,17 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                     final nutritionIndex = index % 6;
                     switch (nutritionIndex) {
                       case 0:
-                        return _buildNutritionBubble('Total Calories', '$totalCalories kcal', Colors.red);
+                        return _buildNutritionBubble('Total Calories', '$totalCalories kcal', redColor);
                       case 1:
-                        return _buildNutritionBubble('Protein', '$totalProtein g', Colors.green);
+                        return _buildNutritionBubble('Protein', '$totalProtein g', greenColor);
                       case 2:
-                        return _buildNutritionBubble('Carbs', '$totalCarbs g', Colors.orange);
+                        return _buildNutritionBubble('Carbs', '$totalCarbs g', orangeColor);
                       case 3:
-                        return _buildNutritionBubble('Sodium', '$totalSodium mg', Colors.blue);
+                        return _buildNutritionBubble('Sodium', '$totalSodium mg', blueColor);
                       case 4:
-                        return _buildNutritionBubble('Sugar', '$totalSugar g', Colors.purple);
+                        return _buildNutritionBubble('Sugar', '$totalSugar g', purpleColor);
                       case 5:
-                        return _buildNutritionBubble('Fat', '$totalFat g', Colors.brown);
+                        return _buildNutritionBubble('Fat', '$totalFat g', brownColor);
                       default:
                         return Container();
                     }
@@ -189,16 +190,16 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   Widget _buildMealSummary() {
     return Card(
-      color: const Color.fromARGB(255, 23, 35, 49),
+      color: cardBackgroundColor,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildMealSection('Breakfast', Colors.orange),
-            _buildMealSection('Lunch', Colors.green),
-            _buildMealSection('Dinner', Colors.blue),
-            _buildMealSection('Snacks', Colors.purple),
+            _buildMealSection('Breakfast', orangeColor),
+            _buildMealSection('Lunch', greenColor),
+            _buildMealSection('Dinner', blueColor),
+            _buildMealSection('Snacks', purpleColor),
           ],
         ),
       ),
@@ -250,7 +251,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   Widget _buildProgressChart() {
     return Card(
-      color: const Color.fromARGB(255, 23, 35, 49),
+      color: cardBackgroundColor,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
@@ -263,8 +264,8 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
             const SizedBox(height: 10),
             LinearProgressIndicator(
               value: totalCalories / caloriesGoal,
-              backgroundColor: const Color.fromARGB(255, 21, 27, 35),
-              color: Colors.blueAccent,
+              backgroundColor: progressBackgroundColor,
+              color: progressColor,
               minHeight: 10,
             ),
             const SizedBox(height: 10),

@@ -1,7 +1,9 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter/material.dart';
 
 Widget buildBottomNavBar(int tabIndex, PageController pageController, {required Function(int) onTabChanged}) {
+  final AudioPlayer audioPlayer = AudioPlayer();
   return CircleNavBar(
     activeIcons: const [
       Icon(Icons.dashboard, color: Colors.white),
@@ -32,7 +34,8 @@ Widget buildBottomNavBar(int tabIndex, PageController pageController, {required 
     height: 60,
     circleWidth: 60,
     activeIndex: tabIndex,
-    onTap: (index) {
+    onTap: (index) async {
+      audioPlayer.play(AssetSource('audio/ui-sound1.mp3'), volume: 1);
       onTabChanged(index); 
     },
     padding: const EdgeInsets.only(left: 16, right: 16, bottom: 20),
