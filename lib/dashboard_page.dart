@@ -18,6 +18,11 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   double totalFat = 0;
   late ScrollController _scrollController;
 
+  List<Map<String, dynamic>> breakfastMeals = [];
+  List<Map<String, dynamic>> lunchMeals = [];
+  List<Map<String, dynamic>> snackMeals = [];
+  List<Map<String, dynamic>> dinnerMeals = [];
+
   @override
   void initState() {
     super.initState();
@@ -29,12 +34,16 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   Future<void> _loadUserMeals() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      // Use a generic type for the document snapshot.
+      DocumentSnapshot<Map<String, dynamic>> userDoc = 
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       if (userDoc.exists) {
-        List<dynamic> breakfastMeals = userDoc['breakfastMeals'] ?? [];
-        List<dynamic> lunchMeals = userDoc['lunchMeals'] ?? [];
-        List<dynamic> snackMeals = userDoc['snackMeals'] ?? [];
-        List<dynamic> dinnerMeals = userDoc['dinnerMeals'] ?? [];
+        // Get the document data as a map.
+        final data = userDoc.data();
+        breakfastMeals = List<Map<String, dynamic>>.from(data?['breakfastMeals'] ?? []);
+        lunchMeals = List<Map<String, dynamic>>.from(data?['lunchMeals'] ?? []);
+        snackMeals = List<Map<String, dynamic>>.from(data?['snackMeals'] ?? []);
+        dinnerMeals = List<Map<String, dynamic>>.from(data?['dinnerMeals'] ?? []);
 
         setState(() {
           totalCalories = _calculateTotal(breakfastMeals, 'calories') +
@@ -87,70 +96,183 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
     super.dispose();
   }
 
-  double _calculateTotal(List<dynamic> meals, String nutrient) {
-    return meals.fold(0, (sum, meal) => sum + (meal[nutrient] ?? 0));
+  double _calculateTotal(List<Map<String, dynamic>> meals, String nutrient) {
+    // Use fold with an initial value of 0.0 and cast the nutrient to num before converting to double.
+    return meals.fold<double>(
+      0.0, 
+      (sum, meal) => sum + ((meal[nutrient] ?? 0) as num).toDouble()
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Daily Nutrition Summary',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 6,
+                  itemBuilder: (context, index) {
+                    final nutritionIndex = index % 6;
+                    switch (nutritionIndex) {
+                      case 0:
+                        return _buildNutritionBubble('Total Calories', '$totalCalories kcal', Colors.red);
+                      case 1:
+                        return _buildNutritionBubble('Protein', '$totalProtein g', Colors.green);
+                      case 2:
+                        return _buildNutritionBubble('Carbs', '$totalCarbs g', Colors.orange);
+                      case 3:
+                        return _buildNutritionBubble('Sodium', '$totalSodium mg', Colors.blue);
+                      case 4:
+                        return _buildNutritionBubble('Sugar', '$totalSugar g', Colors.purple);
+                      case 5:
+                        return _buildNutritionBubble('Fat', '$totalFat g', Colors.brown);
+                      default:
+                        return Container();
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 100,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 4, 
+                  itemBuilder: (context, index) {
+                    return Container(
+                      width: 200,
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/meal_$index.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Meal Summary',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              _buildMealSummary(),
+              const SizedBox(height: 20),
+              const Text(
+                'Progress Chart',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              _buildProgressChart(),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMealSummary() {
+    return Card(
+      color: const Color.fromARGB(255, 23, 35, 49),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildMealSection('Breakfast', Colors.orange),
+            _buildMealSection('Lunch', Colors.green),
+            _buildMealSection('Dinner', Colors.blue),
+            _buildMealSection('Snacks', Colors.purple),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMealSection(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Icon(Icons.fastfood, color: color),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const Spacer(),
+          Text(
+            '${_calculateTotalCalories(title)} calories',
+            style: const TextStyle(color: Colors.white70),
+          ),
+        ],
+      ),
+    );
+  }
+
+  int _calculateTotalCalories(String mealType) {
+    switch (mealType) {
+      case 'Breakfast':
+        return totalCaloriesFromMeals(breakfastMeals);
+      case 'Lunch':
+        return totalCaloriesFromMeals(lunchMeals);
+      case 'Dinner':
+        return totalCaloriesFromMeals(dinnerMeals);
+      case 'Snacks':
+        return totalCaloriesFromMeals(snackMeals);
+      default:
+        return 0;
+    }
+  }
+
+  int totalCaloriesFromMeals(List<Map<String, dynamic>> meals) {
+    // Use fold with an initial value of 0 and cast the calories to num before converting to int.
+    return meals.fold<int>(
+      0, 
+      (sum, meal) => sum + ((meal['calories'] ?? 0) as num).toInt()
+    );
+  }
+
+  Widget _buildProgressChart() {
+    return Card(
+      color: const Color.fromARGB(255, 23, 35, 49),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Daily Nutrition Summary',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              'Calories Progress',
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            SizedBox(
-              height: 120,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 6,
-                itemBuilder: (context, index) {
-                  final nutritionIndex = index % 6;
-                  switch (nutritionIndex) {
-                    case 0:
-                      return _buildNutritionBubble('Total Calories', '$totalCalories kcal', Colors.red);
-                    case 1:
-                      return _buildNutritionBubble('Protein', '$totalProtein g', Colors.green);
-                    case 2:
-                      return _buildNutritionBubble('Carbs', '$totalCarbs g', Colors.orange);
-                    case 3:
-                      return _buildNutritionBubble('Sodium', '$totalSodium mg', Colors.blue);
-                    case 4:
-                      return _buildNutritionBubble('Sugar', '$totalSugar g', Colors.purple);
-                    case 5:
-                      return _buildNutritionBubble('Fat', '$totalFat g', Colors.brown);
-                    default:
-                      return Container();
-                  }
-                },
-              ),
+            LinearProgressIndicator(
+              value: totalCalories / 2000,
+              backgroundColor: const Color.fromARGB(255, 21, 27, 35),
+              color: Colors.blueAccent,
+              minHeight: 10,
             ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 100,
-              child: ListView.builder(
-                controller: _scrollController,
-                scrollDirection: Axis.horizontal,
-                itemCount: 4, 
-                itemBuilder: (context, index) {
-                  return Container(
-                    width: 200,
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/meal_$index.jpg'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  );
-                },
-              ),
+            const SizedBox(height: 10),
+            Text(
+              '${totalCalories.round()} of 2000 calories',
+              style: const TextStyle(color: Colors.white70),
             ),
           ],
         ),
