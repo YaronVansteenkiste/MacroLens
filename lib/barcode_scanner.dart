@@ -121,7 +121,6 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                           );
 
                           if (result != null && mounted) {
-                            // ignore: use_build_context_synchronously
                             Navigator.pop(context, result);
                           }
                         }

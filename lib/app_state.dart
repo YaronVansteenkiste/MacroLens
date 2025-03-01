@@ -12,12 +12,6 @@ class ApplicationState extends ChangeNotifier {
   bool get loggedIn => _loggedIn;
 
   Future<void> init() async {
-    // Remove Firebase initialization from here
-    // print('Initializing Firebase...');
-    // await Firebase.initializeApp(
-    //     options: DefaultFirebaseOptions.currentPlatform);
-    // print('Firebase initialized');
-
     FirebaseUIAuth.configureProviders([
       EmailAuthProvider(),
     ]);

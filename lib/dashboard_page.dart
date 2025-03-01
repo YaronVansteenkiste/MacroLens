@@ -17,8 +17,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   double totalSugar = 0;
   double totalFat = 0;
   late ScrollController _scrollController;
-  late num caloriesGoal;
-
+  num caloriesGoal = 2000; 
 
   List<Map<String, dynamic>> breakfastMeals = [];
   List<Map<String, dynamic>> lunchMeals = [];
@@ -36,17 +35,15 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   Future<void> _loadUserMeals() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // Use a generic type for the document snapshot.
       DocumentSnapshot<Map<String, dynamic>> userDoc = 
           await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       if (userDoc.exists) {
-        // Get the document data as a map.
         final data = userDoc.data();
         breakfastMeals = List<Map<String, dynamic>>.from(data?['breakfastMeals'] ?? []);
         lunchMeals = List<Map<String, dynamic>>.from(data?['lunchMeals'] ?? []);
         snackMeals = List<Map<String, dynamic>>.from(data?['snackMeals'] ?? []);
         dinnerMeals = List<Map<String, dynamic>>.from(data?['dinnerMeals'] ?? []);
-        caloriesGoal = userDoc['caloriesGoal'] ?? 2000;
+        caloriesGoal = data?['caloriesGoal'] ?? 2000;
 
         setState(() {
           totalCalories = _calculateTotal(breakfastMeals, 'calories') +
@@ -100,7 +97,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   }
 
   double _calculateTotal(List<Map<String, dynamic>> meals, String nutrient) {
-    // Use fold with an initial value of 0.0 and cast the nutrient to num before converting to double.
     return meals.fold<double>(
       0.0, 
       (sum, meal) => sum + ((meal[nutrient] ?? 0) as num).toDouble()
@@ -246,7 +242,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   }
 
   int totalCaloriesFromMeals(List<Map<String, dynamic>> meals) {
-    // Use fold with an initial value of 0 and cast the calories to num before converting to int.
     return meals.fold<int>(
       0, 
       (sum, meal) => sum + ((meal['calories'] ?? 0) as num).toInt()
@@ -289,7 +284,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
       width: 100,
       margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withAlpha(51),
         shape: BoxShape.circle,
         border: Border.all(color: color, width: 2),
       ),
