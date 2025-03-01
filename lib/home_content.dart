@@ -8,7 +8,6 @@ class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeContentState createState() => _HomeContentState();
 }
 
@@ -82,7 +81,7 @@ class _HomeContentState extends State<HomeContent> {
     return Scaffold(
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView( // Added SingleChildScrollView
+          : SingleChildScrollView( 
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(

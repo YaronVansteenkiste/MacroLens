@@ -6,7 +6,6 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 
@@ -118,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView( // Wrap content in SingleChildScrollView
+      body: SingleChildScrollView( 
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -218,7 +217,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ElevatedButton(
                   onPressed: () async {
                     await FirebaseAuth.instance.signOut();
-                    // ignore: use_build_context_synchronously
                     Navigator.pushReplacementNamed(context, '/login');
                   },
                   child: Text('Log Out'),
