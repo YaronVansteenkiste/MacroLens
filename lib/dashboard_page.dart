@@ -17,6 +17,8 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   double totalSugar = 0;
   double totalFat = 0;
   late ScrollController _scrollController;
+  late num caloriesGoal;
+
 
   List<Map<String, dynamic>> breakfastMeals = [];
   List<Map<String, dynamic>> lunchMeals = [];
@@ -44,6 +46,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
         lunchMeals = List<Map<String, dynamic>>.from(data?['lunchMeals'] ?? []);
         snackMeals = List<Map<String, dynamic>>.from(data?['snackMeals'] ?? []);
         dinnerMeals = List<Map<String, dynamic>>.from(data?['dinnerMeals'] ?? []);
+        caloriesGoal = userDoc['caloriesGoal'] ?? 2000;
 
         setState(() {
           totalCalories = _calculateTotal(breakfastMeals, 'calories') +
@@ -264,14 +267,14 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
             ),
             const SizedBox(height: 10),
             LinearProgressIndicator(
-              value: totalCalories / 2000,
+              value: totalCalories / caloriesGoal,
               backgroundColor: const Color.fromARGB(255, 21, 27, 35),
               color: Colors.blueAccent,
               minHeight: 10,
             ),
             const SizedBox(height: 10),
             Text(
-              '${totalCalories.round()} of 2000 calories',
+              '${totalCalories.round()} of $caloriesGoal calories',
               style: const TextStyle(color: Colors.white70),
             ),
           ],
