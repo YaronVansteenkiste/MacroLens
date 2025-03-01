@@ -1,6 +1,10 @@
 # MacroLens
 
-![MacroLens Logo](assets/icons/icon.png)
+# MacroLens
+
+<p align="center">
+  <img src="assets/icons/icon.png" alt="MacroLens Logo" width="150">
+</p>
 
 MacroLens is a Flutter application designed to help you track what you eat. This app is developed as part of a college project at **Thomas More** for the course **Native Apps**.
 
@@ -13,10 +17,12 @@ MacroLens is a Flutter application designed to help you track what you eat. This
 
 ## Screenshots
 
-![Home Screen](assets/showcase/home_screen.png)
-![Dashboard](assets/showcase/dashboard.png)
-![Profile](assets/showcase/profile.png)
-![Scanning](assets/showcase/scanning.png)
+<p align="center">
+  <img src="assets/showcase/homescreen.png" alt="Home Screen" width="250">
+  <img src="assets/showcase/dashboard.png" alt="Dashboard" width="250">
+  <img src="assets/showcase/profile.png" alt="Profile" width="250">
+  <img src="assets/showcase/scanning.png" alt="Scanning" width="250">
+</p>
 
 ## Getting Started
 
@@ -55,7 +61,8 @@ lib/
 ├── meal_info.dart
 ├── profile_page.dart
 ├── register_page.dart
-└── video_player.dart```
+└── video_player.dart
+```
 
 ## Test user credentials:
 - **Email**: admin@macrolens.be
