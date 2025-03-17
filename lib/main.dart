@@ -6,6 +6,7 @@ import 'package:macro_lens/dashboard_page.dart';
 import 'package:macro_lens/home_content.dart';
 import 'package:macro_lens/profile_page.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
 import 'bottom_nav_bar.dart';
 import 'login_page.dart';
@@ -14,6 +15,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(); 
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());

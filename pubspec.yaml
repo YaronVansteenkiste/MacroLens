@@ -25,6 +25,7 @@ dependencies:
   firebase_ui_auth: ^1.16.1
   shared_preferences: ^2.0.13
   video_player: ^2.5.1
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +50,7 @@ flutter:
     - assets/videos/scanning_barcode.mp4
     - assets/audio/ui-sound.mp3
     - assets/audio/ui-sound1.mp3
+    - .env
 
 dependency_overrides:
   intl: ^0.18.0
