@@ -1,7 +1,5 @@
 # MacroLens
 
-# MacroLens
-
 <p align="center">
   <img src="assets/icons/icon.png" alt="MacroLens Logo" width="150">
 </p>
