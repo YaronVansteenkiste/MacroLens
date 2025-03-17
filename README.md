@@ -65,5 +65,7 @@ lib/
 ```
 
 ## Test user credentials:
+Contact me for firebase.json, you put that in your root folder. 
+The following account includes example data:
 - **Email**: admin@macrolens.be
 - **Password**: admin123
