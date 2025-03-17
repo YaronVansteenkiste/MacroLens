@@ -36,8 +36,54 @@ To get started with MacroLens, follow these steps:
     ```bash
     flutter pub get
     ```
+3. **Get API from Firebase
+    Get the following data and save in .env file :
+     ```js
+    API_KEY=
+AUTH_DOMAIN=
+PROJECT_ID=
+STORAGE_BUCKET=
+MESSAGING_SENDER_ID=
+APP_ID=
+MEASUREMENT_ID=
 
-3. **Run the app**:
+WEB_API_KEY=
+WEB_APP_ID=
+WEB_MESSAGING_SENDER_ID=
+WEB_PROJECT_ID=
+WEB_AUTH_DOMAIN=
+WEB_STORAGE_BUCKET=
+WEB_MEASUREMENT_ID=
+
+ANDROID_API_KEY=
+ANDROID_APP_ID=
+ANDROID_MESSAGING_SENDER_ID=
+ANDROID_PROJECT_ID=
+ANDROID_STORAGE_BUCKET=
+
+IOS_API_KEY=
+IOS_APP_ID=
+IOS_MESSAGING_SENDER_ID=
+IOS_PROJECT_ID=
+IOS_STORAGE_BUCKET=
+IOS_BUNDLE_ID=
+
+MACOS_API_KEY=
+MACOS_APP_ID=
+MACOS_MESSAGING_SENDER_ID=
+MACOS_PROJECT_ID=
+MACOS_STORAGE_BUCKET=
+MACOS_BUNDLE_ID=
+
+WINDOWS_API_KEY=
+WINDOWS_MESSAGING_SENDER_ID=
+WINDOWS_PROJECT_ID=
+WINDOWS_AUTH_DOMAIN=
+WINDOWS_STORAGE_BUCKET=
+WINDOWS_MEASUREMENT_ID=
+    ```
+
+4. **Run the app**:
     ```bash
     flutter run
     ```
@@ -63,7 +109,7 @@ lib/
 ```
 
 ## Test user credentials:
-Contact me for firebase.json, you put that in your root folder. 
+Contact me for .env, and put that in your root folder. 
 The following account includes example data:
 - **Email**: admin@macrolens.be
 - **Password**: admin123
